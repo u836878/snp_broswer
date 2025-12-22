@@ -49,7 +49,7 @@ def upload():
             pdf = generate_pdf(matches)
             progress_data[task_id] = {'progress': 100, 'status': 'Complete', 'task_id': task_id}
             
-            return send_file(pdf, as_attachment=True, download_name='SNP_matches.pdf', mimetype='application/pdf')
+            return send_file(pdf, as_attachment=True, download_name='DNA_report.pdf', mimetype='application/pdf')
         except Exception as e:
             # Delete uploaded file even on error
             if os.path.exists(filepath):
