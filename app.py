@@ -80,7 +80,7 @@ def process_csv(csv_path, task_id=None):
         snp_col = 0
         gen_col = 3
     
-    db_path = os.path.join(os.path.dirname(__file__), '..', 'SNPdata.db')
+    db_path = os.path.join(os.path.dirname(__file__), 'SNPdata.db')
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     results = []
