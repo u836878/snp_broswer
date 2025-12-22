@@ -189,26 +189,41 @@
         }
 
         .progress-container {
-            width: 100%;
-            background: #f3f3f3;
-            border-radius: 10px;
-            height: 30px;
-            margin-top: 15px;
-            overflow: hidden;
             display: none;
+            text-align: center;
+            margin-top: 30px;
         }
 
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
+        .spinner-dots {
             display: flex;
-            align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9em;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
         }
 
         .progress-text {
@@ -248,9 +263,13 @@
             </button>
 
             <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar">0%</div>
+                <div class="spinner-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="progress-text" id="progressText">Processing your DNA data...</div>
             </div>
-            <div class="progress-text" id="progressText"></div>
 
             <div class="loading" id="loading">
                 <div class="spinner" id="spinner"></div>
@@ -330,15 +349,10 @@
             generateBtn.textContent = 'Processing...';
             
             const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
             
-            // Show progress bar
+            // Show loading spinner
             progressContainer.style.display = 'block';
-            progressText.style.display = 'block';
-            progressBar.style.width = '50%';
-            progressBar.textContent = '50%';
-            progressText.textContent = 'Processing your file...';
             
             try {
                 // Upload file
@@ -349,8 +363,6 @@
                 
                 if (response.ok) {
                     // Show success message
-                    progressBar.style.width = '100%';
-                    progressBar.textContent = '100%';
                     progressText.textContent = '✅ Report is ready! Download should start automatically.';
                     progressText.style.color = '#28a745';
                     
