@@ -53,16 +53,9 @@ def upload():
 
 @app.route('/progress/<task_id>')
 def progress(task_id):
-    def generate():
-        while True:
-            if task_id in progress_data:
-                data = progress_data[task_id]
-                yield f"data: {json.dumps(data)}\n\n"
-                if data['progress'] >= 100:
-                    break
-            import time
-            time.sleep(0.1)
-    return Response(generate(), mimetype='text/event-stream')
+    if task_id in progress_data:
+        return jsonify(progress_data[task_id])
+    return jsonify({'progress': 0, 'status': 'Starting...'})
 
 def process_csv(csv_path, task_id=None):
     import csv
