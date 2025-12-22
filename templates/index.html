@@ -336,20 +336,9 @@
             // Show progress bar
             progressContainer.style.display = 'block';
             progressText.style.display = 'block';
-            
-            // Start SSE connection for progress updates
-            const eventSource = new EventSource('/progress/' + taskId);
-            
-            eventSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                progressBar.style.width = data.progress + '%';
-                progressBar.textContent = data.progress + '%';
-                progressText.textContent = data.status;
-                
-                if (data.progress >= 100) {
-                    eventSource.close();
-                }
-            };
+            progressBar.style.width = '50%';
+            progressBar.textContent = '50%';
+            progressText.textContent = 'Processing your file...';
             
             try {
                 // Upload file
@@ -357,8 +346,6 @@
                     method: 'POST',
                     body: formData
                 });
-                
-                eventSource.close();
                 
                 if (response.ok) {
                     // Show success message
