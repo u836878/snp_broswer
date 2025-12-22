@@ -36,6 +36,10 @@ def upload():
             # Process CSV with progress tracking
             matches = process_csv(filepath, task_id)
             
+            # Delete uploaded file after processing
+            if os.path.exists(filepath):
+                os.remove(filepath)
+            
             if not matches:
                 progress_data[task_id] = {'progress': 100, 'status': 'No matches found', 'task_id': task_id}
                 return jsonify({'error': 'No matches found'}), 404
@@ -47,6 +51,9 @@ def upload():
             
             return send_file(pdf, as_attachment=True, download_name='SNP_matches.pdf', mimetype='application/pdf')
         except Exception as e:
+            # Delete uploaded file even on error
+            if os.path.exists(filepath):
+                os.remove(filepath)
             progress_data[task_id] = {'progress': 100, 'status': f'Error: {str(e)}', 'task_id': task_id}
             return jsonify({'error': str(e)}), 500
     return jsonify({'error': 'Invalid file. Please upload a CSV or TXT file.'}), 400
