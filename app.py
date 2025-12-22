@@ -25,7 +25,7 @@ def upload():
     file = request.files['file']
     task_id = request.form.get('task_id', str(uuid.uuid4()))
     
-    if file and file.filename.endswith('.csv'):
+    if file and (file.filename.endswith('.csv') or file.filename.endswith('.txt')):
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
         
@@ -49,7 +49,7 @@ def upload():
         except Exception as e:
             progress_data[task_id] = {'progress': 100, 'status': f'Error: {str(e)}', 'task_id': task_id}
             return jsonify({'error': str(e)}), 500
-    return jsonify({'error': 'Invalid file'}), 400
+    return jsonify({'error': 'Invalid file. Please upload a CSV or TXT file.'}), 400
 
 @app.route('/progress/<task_id>')
 def progress(task_id):
