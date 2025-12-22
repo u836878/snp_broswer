@@ -146,9 +146,6 @@ def generate_pdf(matches):
     c = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
     y = height - 40
-    c.setFont('Helvetica-Bold', 16)
-    c.drawString(40, y, 'SNP Report')
-    y -= 30
     c.setFont('Helvetica', 12)
     c.drawString(40, y, f'Number of matching SNPs found: {len(matches)}')
     y -= 30
