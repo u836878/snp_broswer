@@ -134,7 +134,19 @@ def process_csv(csv_path, task_id=None, filter_type='risks'):
                 SELECT DISTINCT * FROM snp_data 
                 WHERE (SNP, Gen) IN (VALUES {placeholders})
                 {color_filter}
-                AND LOWER(Summary) NOT IN ('normal', 'normal risk', 'common')
+                AND Summary IS NOT NULL
+                AND Summary != ''
+                AND LOWER(TRIM(Summary)) NOT IN (
+                    'normal', 'normal risk', 'common',
+                    'common in complete genomics',
+                    'not specified',
+                    'common/normal',
+                    'common on affy axiom data',
+                    'not provided',
+                    'common genotype',
+                    'not specified not provided',
+                    'not provided not specified'
+                )
             """
             cursor.execute(query, flat_params)
             batch_results = cursor.fetchall()
