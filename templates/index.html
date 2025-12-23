@@ -114,6 +114,48 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
 
+        .filter-options {
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .filter-options label {
+            display: block;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: #f0f0ff;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
         .generate-btn:active {
             transform: translateY(0);
         }
@@ -258,6 +300,16 @@
 
             <div class="file-name" id="fileName"></div>
 
+            <div class="filter-options" id="filterOptions" style="display: none;">
+                <label>Select report type:</label>
+                <div class="filter-buttons">
+                    <button type="button" class="filter-btn active" data-filter="risks">🔴 Risks</button>
+                    <button type="button" class="filter-btn" data-filter="benefits">🟢 Benefits</button>
+                    <button type="button" class="filter-btn" data-filter="all">📊 All</button>
+                </div>
+                <input type="hidden" id="filterType" name="filter_type" value="risks">
+            </div>
+
             <button type="submit" class="generate-btn" id="generateBtn">
                 🔬 Generate Report
             </button>
@@ -295,6 +347,21 @@
         const generateBtn = document.getElementById('generateBtn');
         const uploadForm = document.getElementById('uploadForm');
         const loading = document.getElementById('loading');
+        const filterOptions = document.getElementById('filterOptions');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const filterTypeInput = document.getElementById('filterType');
+
+        // Handle filter button clicks
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+                // Update hidden input value
+                filterTypeInput.value = btn.dataset.filter;
+            });
+        });
 
         // Click to upload
         uploadArea.addEventListener('click', () => {
@@ -320,11 +387,11 @@
             e.preventDefault();
             uploadArea.classList.remove('dragover');
             const file = e.dataTransfer.files[0];
-            if (file && file.name.endsWith('.csv')) {
+            if (file && (file.name.endsWith('.csv') || file.name.endsWith('.txt'))) {
                 fileInput.files = e.dataTransfer.files;
                 handleFile(file);
             } else {
-                alert('Please upload a CSV file');
+                alert('Please upload a CSV or TXT file');
             }
         });
 
@@ -332,6 +399,7 @@
             if (file) {
                 fileName.textContent = `📄 Selected: ${file.name}`;
                 fileName.style.display = 'block';
+                filterOptions.style.display = 'block';
                 generateBtn.style.display = 'block';
             }
         }

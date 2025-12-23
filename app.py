@@ -24,6 +24,7 @@ def index():
 def upload():
     file = request.files['file']
     task_id = request.form.get('task_id', str(uuid.uuid4()))
+    filter_type = request.form.get('filter_type', 'risks')  # Default to 'risks'
     
     if file and (file.filename.endswith('.csv') or file.filename.endswith('.txt')):
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
@@ -33,8 +34,8 @@ def upload():
             # Initialize progress
             progress_data[task_id] = {'progress': 0, 'status': 'Processing', 'task_id': task_id}
             
-            # Process CSV with progress tracking
-            matches = process_csv(filepath, task_id)
+            # Process CSV with progress tracking and filter
+            matches = process_csv(filepath, task_id, filter_type)
             
             # Delete uploaded file after processing
             if os.path.exists(filepath):
@@ -64,7 +65,7 @@ def progress(task_id):
         return jsonify(progress_data[task_id])
     return jsonify({'progress': 0, 'status': 'Starting...'})
 
-def process_csv(csv_path, task_id=None):
+def process_csv(csv_path, task_id=None, filter_type='risks'):
     import csv
     # Detect delimiter and header
     with open(csv_path, 'r', encoding='utf-8') as f:
@@ -121,10 +122,18 @@ def process_csv(csv_path, task_id=None):
             placeholders = ','.join(['(?,?)'] * len(snp_gen_pairs))
             flat_params = [item for pair in snp_gen_pairs for item in pair]
             
+            # Build query based on filter type
+            if filter_type == 'risks':
+                color_filter = "AND Color='Red'"
+            elif filter_type == 'benefits':
+                color_filter = "AND Color='Green'"
+            else:  # 'all'
+                color_filter = ""
+            
             query = f"""
                 SELECT DISTINCT * FROM snp_data 
                 WHERE (SNP, Gen) IN (VALUES {placeholders})
-                AND Color='Red' 
+                {color_filter}
                 AND LOWER(Summary) NOT IN ('normal', 'normal risk', 'common')
             """
             cursor.execute(query, flat_params)
