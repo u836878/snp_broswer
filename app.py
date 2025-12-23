@@ -161,14 +161,25 @@ def generate_pdf(matches):
     
     max_width = width - 80  # Leave margins on both sides
     
+    # Group matches by summary
+    from collections import defaultdict
+    summary_groups = defaultdict(list)
     for match in matches:
         # match format: (id, SNP, Gen, Summary, Color)
-        snp_header = f"{match[1]} | {match[2]}"
         summary = match[3]
+        snp_gen = f"{match[1]} | {match[2]}"
+        summary_groups[summary].append(snp_gen)
+    
+    for summary, snp_gen_list in summary_groups.items():
+        # Draw all SNP|Gen combinations for this summary
+        for snp_gen in snp_gen_list:
+            c.drawString(40, y, snp_gen)
+            y -= 15
+            if y < 40:
+                c.showPage()
+                y = height - 40
         
-        # Draw SNP header
-        c.drawString(40, y, snp_header)
-        y -= 15
+        y -= 5  # Small gap before summary
         
         # Wrap and draw summary text
         from reportlab.pdfbase.pdfmetrics import stringWidth
@@ -195,7 +206,7 @@ def generate_pdf(matches):
                 c.showPage()
                 y = height - 40
         
-        y -= 10  # Extra space between entries
+        y -= 20  # Extra space between groups
         if y < 40:
             c.showPage()
             y = height - 40
