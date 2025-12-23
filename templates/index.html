@@ -412,6 +412,7 @@
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
             formData.append('task_id', taskId);
+            formData.append('filter_type', filterTypeInput.value);
             
             generateBtn.disabled = true;
             generateBtn.textContent = 'Processing...';
