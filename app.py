@@ -146,6 +146,8 @@ def process_csv(csv_path, task_id=None, filter_type='risks'):
                     'common genotype',
                     'not specified not provided',
                     'not provided not specified',
+                    'not  specified not provided',
+                    'not provided  not specified',
                     'none'
                 )
             """
